@@ -33,6 +33,7 @@ s.dependency 'SDWebImage'
 s.dependency 'SDWebImage'
 s.dependency 'MJRefresh'
 s.dependency 'YLGIFImage'
+s.dependency 'TZImagePickerController'
 
 
 end
