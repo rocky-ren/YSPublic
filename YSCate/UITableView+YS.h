@@ -10,12 +10,14 @@
 
 @interface UITableView (YS)
 
-+ (void)setEmptyView:(UIView *)emptyView;
++ (void)ys_setEmptyView:(UIView *)emptyView;
 
-+ (void)setNetErrorView:(UIView *)errorView;
++ (void)ys_setNetErrorView:(UIView *)errorView;
 
-- (void)showDataEmpty;
+- (void)ys_showDataEmpty;
 
-- (void)showNetError;
+- (void)ys_showNetError;
+
+- (void)ys_hideTipView;
 
 @end

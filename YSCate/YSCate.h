@@ -19,5 +19,6 @@
 #import "NSMutableAttributedString+Cate.h"
 #import "UIControl+YS.h"
 #import "NSDictionary+Category.h"
+#import "UIViewController+YS.h"
 
 #endif /* YSCate_h */

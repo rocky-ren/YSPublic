@@ -1,34 +1,26 @@
 //
-//  JRTTMenus.m
-//  YS
+//  WYXWMenus.m
+//  YSPublicDemo
 //
-//  Created by Rocky on 2018/7/8.
-//  Copyright © 2018年 任皖鹏. All rights reserved.
+//  Created by rocky on 2018/8/4.
+//  Copyright © 2018年 rocky. All rights reserved.
 //
 
-#import "JRTTMenus.h"
+#import "WYXWMenus.h"
 #import "YSConstant.h"
 #import "YSCate.h"
 
 #define min 0.9
 
-#define R 0
-#define G 0
-#define B 0
+#define R 150
+#define G 150
+#define B 150
 
-#define R_ 206
-#define G_ 53
-#define B_ 53
+#define R_ 0
+#define G_ 0
+#define B_ 0
 
-//#define R 200 0
-//#define G 200
-//#define B 200
-
-//#define R_ 0
-//#define G_ 0
-//#define B_ 0
-
-@implementation JRTTMenus {
+@implementation WYXWMenus {
     UIScrollView *_scrollView;
     UIView *_viewLine;
 }
@@ -42,9 +34,9 @@
         
         CGFloat h = 1.0/[UIScreen mainScreen].scale;
         _viewLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height-h, self.frame.size.width, h)];
-        _viewLine.backgroundColor =UIColorFromRGBX(0xE0E0E0, 1);
+        _viewLine.backgroundColor = UIColorFromRGBX(0xE0E0E0, 1);
         [self addSubview:_scrollView];
-        [self addSubview:_viewLine];
+        // [self addSubview:_viewLine];
     }
     return self;
 }
@@ -69,12 +61,12 @@
         }
         x = self.frame.size.width;
     }
-
+    
     _scrollView.contentSize = CGSizeMake(x, self.frame.size.height);
 }
 
 - (UIButton *)btnFactoryWithTitle:(NSString *)title index:(NSInteger)index {
-    UIFont *font = [UIFont systemFontOfSize:20];
+    UIFont *font = [UIFont systemFontOfSize:19];
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     btn.tag = index+10;
@@ -171,6 +163,3 @@
 }
 
 @end
-
-
-

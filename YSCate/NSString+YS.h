@@ -12,6 +12,10 @@
 
 @interface NSString (YS)
 
+- (NSString *)transformToPinyin;
+
+- (NSString *)transformToPinyinFirstLetter;
+
 - (NSString *)ys_URLEncodedString;
 
 - (NSString *)ys_URLDecodedString;

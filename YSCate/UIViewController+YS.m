@@ -7,6 +7,8 @@
 //
 
 #import "UIViewController+YS.h"
+#import "YSAlert+Normal.h"
+#import "YSAlert.h"
 
 #import <objc/runtime.h>
 
@@ -16,8 +18,19 @@
 #import <PhotosUI/PhotosUI.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
+#import "TZImagePickerController.h"
+
 static const void *IsEditImg = &IsEditImg;
 static const void *ImagePickerController = &ImagePickerController;
+static const void *SelectImgBlockKey = &SelectImgBlockKey;
+static const void *SeletVideoBlockKey = &SeletVideoBlockKey;
+
+@interface UIViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+
+@property (assign, nonatomic) BOOL isEditImg;
+@property (nonatomic, strong) UIImagePickerController *imagePickerController;
+
+@end
 
 @implementation UIViewController (YS) 
 
@@ -37,11 +50,17 @@ static const void *ImagePickerController = &ImagePickerController;
     return objc_getAssociatedObject(self, ImagePickerController);
 }
 
-- (void)showUpdateAvatar:(UpdateAvatarBlock)updateAvatarBlock {
-
+- (void)ys_showCameraVideoSeletVideoBlock:(SeletVideoBlock)seletVideoBlock {
+    objc_setAssociatedObject(self, SeletVideoBlockKey, seletVideoBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
     if (status == AVAuthorizationStatusRestricted || status == AVAuthorizationStatusDenied) {
-        NSLog(@"无法使用摄像头，请检测摄像头是否可用或者有权限访问！");
+        NSString *domain = @"com.yscoco";
+        NSString *desc = NSLocalizedString(@"无法使用摄像头，请检测摄像头是否可用或者有权限访问！", @"");
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey : desc};
+        NSError *error = [NSError errorWithDomain:domain
+                                             code:-101
+                                         userInfo:userInfo];
+        seletVideoBlock(nil, error);
         return;
     }
     
@@ -50,53 +69,142 @@ static const void *ImagePickerController = &ImagePickerController;
         imagePickerController.delegate = self;
         self.imagePickerController = imagePickerController;
     }
-    
-    self.isEditImg = YES;
-    self.imagePickerController.isEditImg = YES;
-    __block UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"请选择" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    __weak typeof(self) weakSelf = self;
-    UIAlertAction *actionCamera = [UIAlertAction actionWithTitle:@"相机" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        weakSelf.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
-        [weakSelf presentViewController:weakSelf.imagePickerController animated:YES completion:^{
-            
-        }];
-    }];
-    
-    UIAlertAction *actionPhoto = [UIAlertAction actionWithTitle:@"相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        weakSelf.imagePickerController.sourceType = UIImagePickerControllerCameraCaptureModePhoto;
-        [weakSelf presentViewController:weakSelf.imagePickerController animated:YES completion:^{
-            
-        }];
-    }];
-    
-    UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        [alert dismissViewControllerAnimated:YES
-                                  completion:^{
-                                      
-                                  }];
-    }];
-    [alert addAction:actionCamera];
-    [alert addAction:actionPhoto];
-    [alert addAction:actionCancel];
-    
-    [self presentViewController:alert animated:YES completion:^{
+    self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+    NSArray *availableMedia = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
+    self.imagePickerController.mediaTypes = [NSArray arrayWithObject:availableMedia[1]];
+    [self presentViewController:self.imagePickerController animated:YES completion:^{
         
+    }];
+}
+
+- (void)ys_showPhotoVideoSeletVideoBlock:(SeletVideoBlock)seletVideoBlock {
+    objc_setAssociatedObject(self, SeletVideoBlockKey, seletVideoBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (status == AVAuthorizationStatusRestricted || status == AVAuthorizationStatusDenied) {
+        NSString *domain = @"com.yscoco";
+        NSString *desc = NSLocalizedString(@"无法使用摄像头，请检测摄像头是否可用或者有权限访问！", @"");
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey : desc};
+        NSError *error = [NSError errorWithDomain:domain
+                                             code:-101
+                                         userInfo:userInfo];
+        seletVideoBlock(nil, error);
+        return;
+    }
+    
+    if (!self.imagePickerController) {
+        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+        imagePickerController.delegate = self;
+        self.imagePickerController = imagePickerController;
+    }
+    self.imagePickerController.sourceType = UIImagePickerControllerCameraCaptureModePhoto;
+    NSArray *availableMedia = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
+    self.imagePickerController.mediaTypes = [NSArray arrayWithObject:availableMedia[1]];
+    [self presentViewController:self.imagePickerController animated:YES completion:^{
+        
+    }];
+}
+
+
+- (void)ys_showCameraEdit:(BOOL)allowedEditImg selectImgBlock:(SelectImgBlock)selectImgBlock {
+    self.isEditImg = allowedEditImg;
+    
+    objc_setAssociatedObject(self, SelectImgBlockKey, selectImgBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (status == AVAuthorizationStatusRestricted || status == AVAuthorizationStatusDenied) {
+        NSString *domain = @"com.yscoco";
+        NSString *desc = NSLocalizedString(@"无法使用摄像头，请检测摄像头是否可用或者有权限访问！", @"");
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey : desc};
+        NSError *error = [NSError errorWithDomain:domain
+                                             code:-101
+                                         userInfo:userInfo];
+        selectImgBlock(nil, error);
+        return;
+    }
+    
+    if (!self.imagePickerController) {
+        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+        imagePickerController.delegate = self;
+        self.imagePickerController = imagePickerController;
+    }
+    self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+    self.imagePickerController.allowsEditing = self.isEditImg;
+    [self presentViewController:self.imagePickerController animated:YES completion:^{
+        
+    }];
+}
+
+- (void)ys_showPhotoEdit:(BOOL)allowedEditImg selectImgBlock:(SelectImgBlock)selectImgBlock {
+    self.isEditImg = allowedEditImg;
+    
+    objc_setAssociatedObject(self, SelectImgBlockKey, selectImgBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (status == AVAuthorizationStatusRestricted || status == AVAuthorizationStatusDenied) {
+        NSString *domain = @"com.yscoco";
+        NSString *desc = NSLocalizedString(@"无法使用摄像头，请检测摄像头是否可用或者有权限访问！", @"");
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey : desc};
+        NSError *error = [NSError errorWithDomain:domain
+                                             code:-101
+                                         userInfo:userInfo];
+        selectImgBlock(nil, error);
+        return;
+    }
+    
+    if (!self.imagePickerController) {
+        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+        imagePickerController.delegate = self;
+        self.imagePickerController = imagePickerController;
+    }
+    self.imagePickerController.sourceType = UIImagePickerControllerCameraCaptureModePhoto;
+    self.imagePickerController.allowsEditing = self.isEditImg;
+    [self presentViewController:self.imagePickerController animated:YES completion:^{
+        
+    }];
+}
+
+- (void)ys_showUpdateAvatar:(SelectImgBlock)selectImgBlock {
+    __weak typeof(self) weakSelf = self;
+    [YSAlert showWithSelects:@[@"从手机相册选择", @"拍照"] clickAtIndex:^(NSInteger index, UIView *view) {
+        if (index == 0) { [weakSelf ys_showPhotoEdit:YES selectImgBlock:selectImgBlock]; }
+        if (index == 1) { [weakSelf ys_showCameraEdit:YES selectImgBlock:selectImgBlock]; }
     }];
 }
 
 #pragma mark - UIImagePickerControllerDelegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
-    UIImage *img;
-    if (self.isEditImg) {
-        img = info[UIImagePickerControllerEditedImage];
-    }else {
-        img = info[UIImagePickerControllerOriginalImage];
+    
+    NSURL *sourceURL = [info objectForKey:UIImagePickerControllerMediaURL];
+    NSLog(@"%@", sourceURL);
+    
+    if (sourceURL) {
+        SeletVideoBlock seletVideoBlock = objc_getAssociatedObject(self, SeletVideoBlockKey);
+        seletVideoBlock(sourceURL, nil);
+    } else {
+        UIImage *img;
+        if (self.isEditImg) {
+            img = info[UIImagePickerControllerEditedImage];
+        } else {
+            img = info[UIImagePickerControllerOriginalImage];
+        }
+        SelectImgBlock selectImgBlock = objc_getAssociatedObject(self, SelectImgBlockKey);
+        if (selectImgBlock) {
+            selectImgBlock(img, nil);
+        }
     }
+    [self.imagePickerController dismissViewControllerAnimated:YES completion:^{
+        
+    }];
 }
 
-- (void)showSeletImgs:(SeletImgsBlock)seletImgsBlock {
-    
+- (void)ys_showSeletImgs:(SeletImgsBlock)seletImgsBlock canSelectNum:(NSInteger)num {
+    TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:num delegate:nil];
+    imagePickerVc.title = @"";
+    [imagePickerVc setDidFinishPickingPhotosHandle:^(NSArray<UIImage *> *photos, NSArray *assets, BOOL isSelectOriginalPhoto) {
+        seletImgsBlock(photos, nil);
+    }];
+    [self presentViewController:imagePickerVc animated:YES completion:nil];
 }
+
 
 @end
