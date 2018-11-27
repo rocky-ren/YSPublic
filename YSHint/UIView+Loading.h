@@ -13,12 +13,13 @@
 /**
  加载中
  */
-- (void)showLoading;
+- (void)ys_showLoading;
+- (void)ys_showLoading:(NSString *)str;
 
 
 /**
  加载结束
  */
-- (void)hideLoading;
+- (void)ys_hideLoading;
 
 @end

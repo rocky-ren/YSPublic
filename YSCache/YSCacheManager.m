@@ -6,9 +6,9 @@
 //  Copyright © 2018年 任皖鹏. All rights reserved.
 //
 
-#import "CacheManager.h"
+#import "YSCacheManager.h"
 
-@implementation CacheManager
+@implementation YSCacheManager
 
 + (BOOL)saveData:(NSData *)data key:(NSString *)key cate:(NSString *)cate {
     return YES;

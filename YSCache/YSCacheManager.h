@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface CacheManager : NSObject
+@interface YSCacheManager : NSObject
 
 + (BOOL)saveData:(NSData *)data key:(NSString *)key cate:(NSString *)cate;
 

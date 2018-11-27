@@ -16,6 +16,14 @@
     [NSObject ys_showErrorWithHint:[self ys_netErrorInfo:code]];
 }
 
++ (void)ys_showWithSuccessHint:(NSString *)hint {
+    [NSObject ys_showSuccessWithHint:hint];
+}
+
++ (void)ys_showWithFailedHint:(NSString *)hint {
+    [NSObject ys_showErrorWithHint:hint];
+}
+
 + (void)ys_showWithState:(YSHint)hint {
     
     switch (hint) {
