@@ -39,10 +39,6 @@ typedef NS_ENUM(NSInteger, YSHint) {
 
 @interface YSShowHint : NSObject
 
-+ (void)ys_showWithSuccessHint:(NSString *)hint;
-
-+ (void)ys_showWithFailedHint:(NSString *)hint;
-
 + (void)ys_showWithState:(YSHint)hint;
 
 + (void)ys_showNetErrorWithCode:(NSInteger)code;

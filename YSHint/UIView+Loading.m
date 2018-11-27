@@ -24,28 +24,18 @@ static const void *HttpRequestHUDKey = &HttpRequestHUDKey;
 }
 
 
-- (void)ys_showLoading {
-    [self ys_showLoading:nil];
-}
-
-
-- (void)ys_showLoading:(NSString *)str {
-    MBProgressHUD *HUD = [self HUD];
-    if (!HUD) {
-        HUD = [[MBProgressHUD alloc] initWithView:self];
+- (void)showLoading {
+    if (![self HUD]) {
+        MBProgressHUD *HUD = [[MBProgressHUD alloc] initWithView:self];
         HUD.mode = MBProgressHUDModeIndeterminate;
         [self setHUD:HUD];
     }
-    if (str) {
-        HUD.label.text = str;
-    } else {
-        HUD.label.text = @"";
-    }
+    
     [self addSubview:[self HUD]];
     [[self HUD] showAnimated:YES];
 }
 
-- (void)ys_hideLoading {
+- (void)hideLoading {
     [[self HUD] hideAnimated:YES];
 }
 

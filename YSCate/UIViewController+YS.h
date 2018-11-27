@@ -8,19 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void(^SeletVideoBlock)(NSURL *url, NSError *error);
-typedef void(^SeletImgsBlock)(NSArray<UIImage *> *imgs, NSError *error);
-typedef void(^SelectImgBlock)(UIImage *img, NSError *error);
+typedef void(^UpdateAvatarBlock)(UIImage *img);
+typedef void(^SeletImgsBlock)(NSArray<UIImage *> *imgs);
 
-@interface UIViewController (YS)
+@interface UIViewController (YS) <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
-- (void)ys_showUpdateAvatar:(SelectImgBlock)selectImgBlock;
-- (void)ys_showSeletImgs:(SeletImgsBlock)seletImgsBlock canSelectNum:(NSInteger)num;
+@property (assign, nonatomic) BOOL isEditImg;
+@property (nonatomic, strong) UIImagePickerController *imagePickerController;
 
-- (void)ys_showCameraEdit:(BOOL)allowedEditImg selectImgBlock:(SelectImgBlock)selectImgBlock;
-- (void)ys_showPhotoEdit:(BOOL)allowedEditImg selectImgBlock:(SelectImgBlock)selectImgBlock;
+- (void)showUpdateAvatar:(UpdateAvatarBlock)updateAvatarBlock;
 
-- (void)ys_showCameraVideoSeletVideoBlock:(SeletVideoBlock)seletVideoBlock;
-- (void)ys_showPhotoVideoSeletVideoBlock:(SeletVideoBlock)seletVideoBlock;
+- (void)showSeletImgs:(SeletImgsBlock)seletImgsBlock;
 
 @end

@@ -20,17 +20,16 @@
 #define G_ 53
 #define B_ 53
 
-//#define R 200 0
+//#define R 200
 //#define G 200
 //#define B 200
-
+//
 //#define R_ 0
 //#define G_ 0
 //#define B_ 0
 
 @implementation JRTTMenus {
     UIScrollView *_scrollView;
-    UIView *_viewLine;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -40,11 +39,7 @@
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.showsHorizontalScrollIndicator = NO;
         
-        CGFloat h = 1.0/[UIScreen mainScreen].scale;
-        _viewLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height-h, self.frame.size.width, h)];
-        _viewLine.backgroundColor =UIColorFromRGBX(0xE0E0E0, 1);
         [self addSubview:_scrollView];
-        [self addSubview:_viewLine];
     }
     return self;
 }
@@ -60,21 +55,11 @@
         [_scrollView addSubview:btn];
         x = x+btn.frame.size.width;
     }
-    if (x < self.frame.size.width) {
-        float w = (self.frame.size.width-x)/titles.count;
-        for (int i=0; i<titles.count; i++) {
-            NSInteger tag = i+10;
-            UIButton *btn = [_scrollView viewWithTag:tag];
-            btn.frame = CGRectMake(btn.frame.origin.x+i*w, btn.frame.origin.y, btn.frame.size.width+w, btn.frame.size.height);
-        }
-        x = self.frame.size.width;
-    }
-
     _scrollView.contentSize = CGSizeMake(x, self.frame.size.height);
 }
 
 - (UIButton *)btnFactoryWithTitle:(NSString *)title index:(NSInteger)index {
-    UIFont *font = [UIFont systemFontOfSize:20];
+    UIFont *font = [UIFont systemFontOfSize:18];
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     btn.tag = index+10;
@@ -91,7 +76,7 @@
     
     CGFloat w = [title ys_widthWithFont:font constrainedToHeight:self.frame.size.height];
     
-    btn.frame = CGRectMake(0, 0, w+20, self.frame.size.height);
+    btn.frame = CGRectMake(0, 0, w+10, self.frame.size.height);
     
     __weak typeof(self) weakSelf = self;
     [btn handleControlEvent:UIControlEventTouchUpInside withBlock:^(UIButton *btn) {

@@ -15,7 +15,6 @@
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (assign, nonatomic) NSInteger number;
 @property (strong, nonatomic) UIView *protocalMenuView;
-@property (strong, nonatomic) id observer;
 
 @end
 
@@ -24,7 +23,6 @@
 - (instancetype)initWithFrame:(CGRect)frame observer:(id)observer {
     self = [super initWithFrame:frame];
     if (self) {
-        self.observer = observer;
         self.dic = [NSMutableDictionary dictionary];
         self.clipsToBounds = YES;
     }
@@ -56,8 +54,6 @@
 
 - (void)addVCViewAtIndex:(NSInteger)index {
     UIViewController *vc = [self.delegate vCMenus:self index:index];
-    [vc removeFromParentViewController];
-    [self.observer addChildViewController:vc];
     UIView *vcview = vc.view;
     vcview.frame = CGRectMake(self.frame.size.width*index,
                               self.protocalMenuView.frame.size.height,
@@ -128,4 +124,3 @@
 }
 
 @end
-

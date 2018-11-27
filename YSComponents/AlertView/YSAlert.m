@@ -14,7 +14,7 @@
 
 #import "YSConstant.h"
 
-#define kItemMenuCellH 130
+#define kItemMenuCellH 120
 
 @implementation YSAlert
 
