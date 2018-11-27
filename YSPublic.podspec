@@ -29,6 +29,11 @@ s.dependency 'Masonry'
 s.dependency 'ReactiveObjC'
 s.dependency 'UICollectionViewLeftAlignedLayout'
 s.dependency 'KVOController'
+s.dependency 'SDWebImageCache'
+s.dependency 'SDWebImage'
+s.dependency 'MJRefresh'
+s.dependency 'YLGIFImage'
+
 
 end
 
